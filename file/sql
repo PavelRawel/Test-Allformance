@@ -1,9 +1,41 @@
-SELECT *,
+-- a. Самый популярный источник показа для каждого last_click источника
 
-Case 
-WHEN  last_click_source = '(direct) / (none)' and last_view_source  = 'no_source' then 'no source'
-when last_click_source IN ('google / cpc', 'email / newsletter', 'awin / cpa', '(direct) / (none)') AND last_view_source IN  ('criteo / banner', 'google / cpm', 'no_source') then 'perf'
-when last_click_source IN ('google / organic', '(direct) / (none)') AND last_view_source IN  ('youtube / video', 'no_source') then 'brand'
-else 'mix'
- end as type
- from `test-380207.de2024.marketing`
+WITH distinct_source AS (
+  SELECT DISTINCT user_id, last_click_source, last_view_source
+  FROM `test-380207.de2024.marketing`
+)
+
+SELECT  last_click_source,  last_view_source FROM
+(
+  SELECT 
+    last_click_source, 
+    last_view_source, 
+    RANK() OVER (PARTITION BY last_click_source ORDER BY COUNT(*) DESC) AS rnk
+  FROM distinct_source
+  GROUP BY last_click_source, last_view_source)
+  WHERE rnk = 1
+
+-- b. Список user_id, которые совершили повторную покупку в течение 10 дней
+
+--Вариант 1
+SELECT distinct user_id
+from
+(SELECT *, count(user_id) over (partition by user_id) as cnt,
+min(timestamp) over (partition by user_id) as min_date,
+max(timestamp) over (partition by user_id) as max_date,
+FROM `test-380207.de2024.marketing` where event = 'purchase' )
+where date_diff(max_date, min_date, day) <= 10 and cnt >1
+
+
+--Вариант 2
+SELECT user_id
+FROM (
+    SELECT user_id, timestamp,
+           LEAD(timestamp, 1) OVER (PARTITION BY user_id ORDER BY timestamp) AS next_timestamp
+    FROM `test-380207.de2024.marketing`
+    WHERE event = 'purchase'
+) subquery
+WHERE next_timestamp IS NOT NULL
+AND DATE_DIFF(  next_timestamp, timestamp, day) <= 10;
+
+
