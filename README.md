@@ -10,6 +10,7 @@
 Ошибки были в user_id... 100490237  997857435, 586082974 – дата
 
 [скрин](https://github.com/PavelRawel/Test-Allformance/blob/main/file/picture.jpg)
+![Alt text](https://github.com/PavelRawel/Test-Allformance/blob/main/file/picture.jpg "a title")
 
 
 # 2. Напиши SQL запросы, которые выведут:
