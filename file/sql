@@ -2,7 +2,7 @@
 
 WITH distinct_source AS (
   SELECT DISTINCT user_id, last_click_source, last_view_source
-  FROM `test-380207.de2024.marketing`
+  FROM `test-380207.de2024.marketing` -- выбираем уникальные источники для юзера
 )
 
 SELECT  last_click_source,  last_view_source FROM
@@ -17,17 +17,6 @@ SELECT  last_click_source,  last_view_source FROM
 
 -- b. Список user_id, которые совершили повторную покупку в течение 10 дней
 
---Вариант 1
-SELECT distinct user_id
-from
-(SELECT *, count(user_id) over (partition by user_id) as cnt,
-min(timestamp) over (partition by user_id) as min_date,
-max(timestamp) over (partition by user_id) as max_date,
-FROM `test-380207.de2024.marketing` where event = 'purchase' )
-where date_diff(max_date, min_date, day) <= 10 and cnt >1
-
-
---Вариант 2
 SELECT user_id
 FROM (
     SELECT user_id, timestamp,
