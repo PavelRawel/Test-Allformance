@@ -9,7 +9,7 @@
 # 1. Проверь данные в таблице на ошибки. Если они там есть, опиши, что это за ошибки и удали строки с некорректными данными.
 Ошибки были в user_id... 100490237  997857435, 586082974 – дата
 
-скрин - https://github.com/PavelRawel/Test-Allformance/blob/main/file/picture.jpg
+[скрин](https://github.com/PavelRawel/Test-Allformance/blob/main/file/picture.jpg)
 
 
 # 2. Напиши SQL запросы, которые выведут:
